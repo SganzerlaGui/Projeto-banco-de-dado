@@ -15,11 +15,11 @@ class Banco_de_dados:
     # ===========================================================================
 
     def criar_tabela(self):
-    #Cria a tabela Login no SQLite com AUTOINCREMENT no ID.
+    #Cria a tabela Login no SQLite
         self.cursor.execute(    
             """
             CREATE TABLE IF NOT EXISTS Login ( 
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id INTEGER PRIMARY KEY,
                 Gmail VARCHAR (250),
                 Senha VARCHAR (250)
                 )      
@@ -37,17 +37,30 @@ class Banco_de_dados:
             "@yahoo.com",
             ]
 
+        # Se pelo menos um item for verdadeiro, o any() avisa que está OK.  
         return any (Gmail.endswith(dominios) for dominios in dominios_valido)
 
     # ==========================================================================
 
     def cadastrar_usuario(self, Gmail, Senha):
+
+        while True:
+            id_sorteado = f"{random.randint(1,9999999999):010d}"
+
+            self.cursor.execute("SELECT 1 FROM Login WHERE id = ?", (id_sorteado,))
+
+            if not self.cursor.fetchone():
+                break
+
         #Inserir um novo usuario no banco de dados
         self.cursor.execute(
-            "INSERT INTO Login (Gmail, Senha) VALUES(?,?)", (Gmail, Senha)
+            "INSERT INTO Login (id, Gmail, Senha) VALUES(?,?,?)", (id_sorteado, Gmail, Senha)
         )
         self.conexao.commit()
-        print(f"\n ✅ O usuário foi cadastrado com sucesso!")
+        print(f"\n ✅ O usuário foi cadastrado com sucesso! ")
+        print(f"\n O seu id cadastrado --> {id_sorteado} ")
+                
+
 
     # ==========================================================================
 
@@ -123,3 +136,5 @@ banco.Listar_usuario()
 
 #Aqui para fechar o banco
 banco.fechar_conexao()
+
+
