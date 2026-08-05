@@ -6,9 +6,9 @@ class Banco_de_dados:
 
     #O __init__ Serve para preparar o terreno e inicializar as variaveis 
     #Basicamente serve para conectar toda vez que a gente entra na classe! 
-    def __init__(self, nome_banco="Dados.db")
+    def __init__(self, nome_banco = "Dados.db"):
 
-        self.conexao = sqlite3.connect(Dados.db)
+        self.conexao = sqlite3.connect(nome_banco)
         self.cursor = self.conexao.cursor()
         self.criar_tabela()
 
@@ -33,11 +33,11 @@ class Banco_de_dados:
         dominios_valido = [
             "@gmail.com",
             "@hotmail.com",
-            "@outlook",
+            "@outlook.com",
             "@yahoo.com",
             ]
 
-        return any (Gmail.endswitch(dominios) for dominios in dominios_valido)
+        return any (Gmail.endswith(dominios) for dominios in dominios_valido)
 
     # ==========================================================================
 
@@ -61,12 +61,12 @@ class Banco_de_dados:
             print("(Nenhum cadastro encontrado)")
         else:
             for u in usuarios:
-                print(f"ID{u[0]}, | Gmail{u[1]}")
+                print(f"ID: {u[0]}, | Gmail: {u[1]}")
         print("-----------------------------------\n")
 
     # ==========================================================================
 
-    def deletar_usuarios(self, id_usuarios):
+    def deletar_usuarios(self, id_usuario):
         #Deletando um usuari do banco, filtrando pelo ID
         self.cursor.execute("DELETE FROM Login WHERE id = ?", (id_usuario,))
         self.conexao.commit()
