@@ -1,3 +1,14 @@
+# --------------- VALIDAR GMAILS E CRIAR AS CLASSES (POO) ------------------
+
+
+
+
+
+
+
+
+
+
 # Para criar um banco de dados com o python junto do SQL, devemos usar o seguinte codigo:
 import random
 import sqlite3
@@ -21,7 +32,7 @@ cursor.execute(
 def gerar_id_unico():
     while True:
         # Sorteia um número de 1 a 9999999999 e completa com zeros à esquerda até dar 10 caracteres
-        novo_id = str(random.randint(1,9999999999)).zfill(10) # O .zfill(numero) --- serve para que complete com 0... até completar 10 digitos
+        novo_id = str(random.randint(10**9, (10**10) - 1)) # Gera um número entre 1.000.000.000 e 9.999.999.999 (10 dígitos)
 
         cursor.execute("SELECT 1 FROM Login WHERE id = ?", (novo_id,)) # Busca se o ID sorteado já existe na tabela (usando o '?' para evitar ataques e erros)   
 
@@ -38,9 +49,22 @@ def gerar_id_unico():
 
 novo_gmail = str(input("Qual o seu melhor Gmail?: "))
 nova_senha = input("Qual a sua senha: ")
+# Gerar id do usuario
+id_usuario = gerar_id_unico()
 
 
+# ----- ENTRADA DOS DADOS NO BANCO ------               
 
+#Insrindo os dados no banco
+
+cursor.execute(
+    "INSERT INTO Login (id, Gmail, Senha) VALUES (?,?,?)",
+    (id_usuario, novo_gmail, nova_senha),
+)
+
+# ---- OBRIGATORIO ------ Para salvar tudo agora no banco de dados
+conexao.commit()
+print(f"\n ✅ O usuário foi cadastrado com sucesso! Seu ID é {id_usuario}\n")
 
 
 # Para mostrar os dados usamos esse codigo
@@ -48,8 +72,10 @@ nova_senha = input("Qual a sua senha: ")
 cursor.execute("SELECT * FROM Login")
 mostrar_os_dados = cursor.fetchall()
 
+print("--- DADOS REGISTRADOS ---")
 for dados in mostrar_os_dados:
-    print(dados)
+    # Os colchetes e os números [0], [1] e [2] servem para acessar as colunas específicas de cada registro retornado pelo banco de dados
+    print(f"ID:{dados[0]}, Gmail:{dados[1]}, Senha:{dados[2]}")
 
 #Sempre fechar a conexão depois do script
 
