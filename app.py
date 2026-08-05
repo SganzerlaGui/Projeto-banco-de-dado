@@ -1,82 +1,125 @@
-# --------------- VALIDAR GMAILS E CRIAR AS CLASSES (POO) ------------------
-
-
-
-
-
-
-
-
-
-
 # Para criar um banco de dados com o python junto do SQL, devemos usar o seguinte codigo:
 import random
 import sqlite3
 
-# Usar esse sqlite3.connec é para estabelecer uma conexão com o servidor sql
-conexao = sqlite3.connect("Dados.db")
-# E para criar um novo arquivo - Vou usar o seguinte codigo:
-cursor = conexao.cursor()
+class Banco_de_dados:
 
-cursor.execute(    
-    '''
-    CREATE TABLE IF NOT EXISTS Login ( 
-        id INTEGER PRIMARY KEY,
-        Gmail VARCHAR (250),
-        Senha VARCHAR (250)
-        
-        )      
-''')
+    #O __init__ Serve para preparar o terreno e inicializar as variaveis 
+    #Basicamente serve para conectar toda vez que a gente entra na classe! 
+    def __init__(self, nome_banco="Dados.db")
+
+        self.conexao = sqlite3.connect(Dados.db)
+        self.cursor = self.conexao.cursor()
+        self.criar_tabela()
+
+    # ===========================================================================
+
+    def criar_tabela(self):
+    #Cria a tabela Login no SQLite com AUTOINCREMENT no ID.
+        self.cursor.execute(    
+            """
+            CREATE TABLE IF NOT EXISTS Login ( 
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                Gmail VARCHAR (250),
+                Senha VARCHAR (250)
+                )      
+        """)   
+        self.conexao.commit()
+
+    # ============================================================================
+            
+    def validar_Gmail(self, Gmail):
+
+        dominios_valido = [
+            "@gmail.com",
+            "@hotmail.com",
+            "@outlook",
+            "@yahoo.com",
+            ]
+
+        return any (Gmail.endswitch(dominios) for dominios in dominios_valido)
+
+    # ==========================================================================
+
+    def cadastrar_usuario(self, Gmail, Senha):
+        #Inserir um novo usuario no banco de dados
+        self.cursor.execute(
+            "INSERT INTO Login (Gmail, Senha) VALUES(?,?)", (Gmail, Senha)
+        )
+        self.conexao.commit()
+        print(f"\n ✅ O usuário foi cadastrado com sucesso!")
+
+    # ==========================================================================
+
+    def Listar_usuario(self):
+        # Essa função serve para listar todos os usuarios do banco de dados
+        self.cursor.execute("SELECT * FROM Login")
+        usuarios = self.cursor.fetchall()
+
+        print("\n--- REGISTROS NO BANCO DE DADOS ---")            
+        if not usuarios:
+            print("(Nenhum cadastro encontrado)")
+        else:
+            for u in usuarios:
+                print(f"ID{u[0]}, | Gmail{u[1]}")
+        print("-----------------------------------\n")
+
+    # ==========================================================================
+
+    def deletar_usuarios(self, id_usuarios):
+        #Deletando um usuari do banco, filtrando pelo ID
+        self.cursor.execute("DELETE FROM Login WHERE id = ?", (id_usuario,))
+        self.conexao.commit()
+
+        if self.cursor.rowcount > 0: 
+            print(f"🗑️  Usuário com ID {id_usuario} foi excluído com sucesso!")
+        else:
+            print(f"⚠️  Nenhum usuário encontrado com o ID {id_usuario}.")
+
+    # ==========================================================================
+
+    def fechar_conexao(self):
+
+        # Essa função serve para fechar o codigo!
+        self.conexao.close()        
+                
 
 
-def gerar_id_unico():
-    while True:
-        # Sorteia um número de 1 a 9999999999 e completa com zeros à esquerda até dar 10 caracteres
-        novo_id = str(random.randint(10**9, (10**10) - 1)) # Gera um número entre 1.000.000.000 e 9.999.999.999 (10 dígitos)
 
-        cursor.execute("SELECT 1 FROM Login WHERE id = ?", (novo_id,)) # Busca se o ID sorteado já existe na tabela (usando o '?' para evitar ataques e erros)   
+# =====================
+# EXECUÇÃO DO PROGRAMA
+# =====================
 
-        # Se o banco responder 'Não' (None), o ID é inédito e podemos usá-lo!
-        if not cursor.fetchone():
-            return novo_id
-        # Se o ID já existir, o 'while' repete e sorteia outro número!
+banco = Banco_de_dados()
 
+# -- Cadastro --
+print("==== CADASTRAR USUÁRIO ====")
 
-# Agora, bora criar uma tabela! -- Basicamente igual o SQL, porém, usar um cursor.execute(codigo em SQL) para coda em SQL
+while True:
+    gmail_input = input("Qual é o seu melhor Gmail? ").lower().strip()  
 
+    if banco.validar_Gmail(gmail_input):
+        break
+    else: 
+        print( "❌ E-mail inválido! Use um domínio aceito (@gmail.com, @hotmail.com, @outlook.com, @yahoo.com).\n")
 
-# Para adicionar as coisas no banco de dados:
-
-novo_gmail = str(input("Qual o seu melhor Gmail?: "))
-nova_senha = input("Qual a sua senha: ")
-# Gerar id do usuario
-id_usuario = gerar_id_unico()
+senha_input =  input("Digite uma senha: ")
 
 
-# ----- ENTRADA DOS DADOS NO BANCO ------               
+#Executa o trabalho
+banco.cadastrar_usuario(gmail_input, senha_input)
 
-#Insrindo os dados no banco
+#Mostrar a lista atual
+banco.Listar_usuario()
 
-cursor.execute(
-    "INSERT INTO Login (id, Gmail, Senha) VALUES (?,?,?)",
-    (id_usuario, novo_gmail, nova_senha),
-)
+# Deletar aqui:
 
-# ---- OBRIGATORIO ------ Para salvar tudo agora no banco de dados
-conexao.commit()
-print(f"\n ✅ O usuário foi cadastrado com sucesso! Seu ID é {id_usuario}\n")
+print(" === DELETAR USUÁRIOS ===")
+id_deletar = input("Digite o id que você quer excluir: ")
+banco.deletar_usuarios(id_deletar)
 
+# Aqui vc vai ver como ficou a lsita depois de excluir o usuário
+banco.Listar_usuario()
 
-# Para mostrar os dados usamos esse codigo
-
-cursor.execute("SELECT * FROM Login")
-mostrar_os_dados = cursor.fetchall()
-
-print("--- DADOS REGISTRADOS ---")
-for dados in mostrar_os_dados:
-    # Os colchetes e os números [0], [1] e [2] servem para acessar as colunas específicas de cada registro retornado pelo banco de dados
-    print(f"ID:{dados[0]}, Gmail:{dados[1]}, Senha:{dados[2]}")
-
-#Sempre fechar a conexão depois do script
-
-conexao.close()
+#Aqui para fechar o banco
+banco.fechar_conexao()
