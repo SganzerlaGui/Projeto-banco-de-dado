@@ -43,6 +43,13 @@ class Banco_de_dados:
     # ==========================================================================
 
     def cadastrar_usuario(self, Gmail, Senha):
+        self.cursor.execute("SELECT 1 FROM login where Gmail = ?", (Gmail,))
+        usuario_existente = self.cursor.fetchone()  # O fetchone() serve para resgatar o primeiro resultado que o banco de dados encontrou! Se ele voltar preenchido, a informação já existe. Se voltar vazio (None), ela não existe!
+
+        if usuario_existente:
+            print(f"Erro: O gmail {Gmail}, já foi cadastrado no sistema!")
+            return False       # <--- Retorna False avisando que o cadastro FALHOU
+
 
         while True:
             id_sorteado = f"{random.randint(1,9999999999):010d}"
@@ -51,8 +58,6 @@ class Banco_de_dados:
 
             if not self.cursor.fetchone():
                 break
-        # Esse try é usado aqui porque, caso de erro e tenha um gmail igual já cadastrado, ele fala que já tem cadastrado e volta novamente para o cadastro 
-        try:
 
             #O python tenta inserir os dados no banco -- O id que foi sorteado, o gmail e a senha
             self.cursor.execute(
@@ -61,10 +66,6 @@ class Banco_de_dados:
             self.conexao.commit()
             print(f"\n ✅ O usuário foi cadastrado com sucesso! ")
             print(f"\n O seu id cadastrado --> {id_sorteado} ")
-
-        except sqlite3.IntegrityError:
-             # Se o banco rejeitar por causa do Gmail repetido, o código cai AQUI:
-            print(f"\n ERRO!: O e-mail '{Gmail}' já está cadastrado no sistema!")
                 
 
 
