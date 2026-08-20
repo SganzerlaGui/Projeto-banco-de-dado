@@ -8,7 +8,7 @@ from pydantic import BaseModel
 ia = FastAPI()
 #pegar na google ia studio
 cliente = genai.Client(api_key="A sua chave de api da google  gemini aqui")
-class Perguntas:
+class Perguntas(BaseModel):    # <--- Faltava herdar o BaseModel aqui dentro dos parênteses!
     texto: str
 
 @ia.post("/perguntar")
