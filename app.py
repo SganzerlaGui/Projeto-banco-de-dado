@@ -8,9 +8,9 @@ class Banco_de_dados:
     #Basicamente serve para conectar toda vez que a gente entra na classe! 
     def __init__(self, nome_banco = "Dados.db"):
 
-        self.conexao = sqlite3.connect(nome_banco)
-        self.cursor = self.conexao.cursor()
-        self.criar_tabela()
+        self.conexao = sqlite3.connect(nome_banco) # ---> self.conexao: Abre o arquivo do banco.
+        self.cursor = self.conexao.cursor()         # --->  self.cursor: Cria o "ponteiro/caneta" que vai escrever os comandos SQL
+        self.criar_tabela()                         # ---> self.criar_tabela(): Ele já chama a função de criar a tabela logo em seguida, para garantir que o banco não comece vazio.
 
     # ===========================================================================
 
@@ -51,14 +51,20 @@ class Banco_de_dados:
 
             if not self.cursor.fetchone():
                 break
+        # Esse try é usado aqui porque, caso de erro e tenha um gmail igual já cadastrado, ele fala que já tem cadastrado e volta novamente para o cadastro 
+        try:
 
-        #Inserir um novo usuario no banco de dados
-        self.cursor.execute(
-            "INSERT INTO Login (id, Gmail, Senha) VALUES(?,?,?)", (id_sorteado, Gmail, Senha)
-        )
-        self.conexao.commit()
-        print(f"\n ✅ O usuário foi cadastrado com sucesso! ")
-        print(f"\n O seu id cadastrado --> {id_sorteado} ")
+            #O python tenta inserir os dados no banco -- O id que foi sorteado, o gmail e a senha
+            self.cursor.execute(
+                "INSERT INTO Login (id, Gmail, Senha) VALUES(?,?,?)", (id_sorteado, Gmail, Senha)
+            )
+            self.conexao.commit()
+            print(f"\n ✅ O usuário foi cadastrado com sucesso! ")
+            print(f"\n O seu id cadastrado --> {id_sorteado} ")
+
+        except sqlite3.IntegrityError:
+             # Se o banco rejeitar por causa do Gmail repetido, o código cai AQUI:
+            print(f"\n ERRO!: O e-mail '{Gmail}' já está cadastrado no sistema!")
                 
 
 
