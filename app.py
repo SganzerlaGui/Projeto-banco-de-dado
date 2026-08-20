@@ -103,85 +103,80 @@ class Banco_de_dados:
         # Essa função serve para fechar o codigo!
         self.conexao.close()        
                 
-def Menu():
-    
-    while True:
-
-        print("\n=== CADASTROS DEPARTAMENTOS ===\n")
-    
-        print("\nEscolha a opção desejada\n")
-    
-        print("\n1 - Cadastra novo usuário")
-    
-        print("\n2 - Excluir conta")
-    
-        print("\n3 - Listar contas")
-    
-        print("\n4 - Modificar senha")
-    
-        print("\n5 - Sair")
-    
-    
-        input("Esscolha uma opção: ").strip()
-
-
-    
-
-
 
 
 # =====================
 # EXECUÇÃO DO PROGRAMA
 # =====================
 
+def Menu():
+   
+        print("\n=== CADASTROS DEPARTAMENTOS ===\n")
+
+        print("\nEscolha a opção desejada\n")
+
+        print("\n1 - Cadastra novo usuário")
+
+        print("\n2 - Excluir conta")
+
+        print("\n3 - Listar contas")
+
+        print("\n4 - Modificar senha")
+
+        print("\n5 - Sair")
+
+
 banco = Banco_de_dados()
 
+#Menu interativo
 while True:
+    Menu()
+    escolha = input("Esscolha uma opção: ").strip()
 
-    print("\n MENU PRINCIPAL")
+    if escolha == 1:
+            # -- Cadastro --
+        print("==== CADASTRAR USUÁRIO ====")
+
+        while True:
+        
+            gmail_input = input("Qual é o seu Gmail? ").lower().strip()  
+
+            senha_input =  input("Digite uma senha: ")
+
+
+            # Primeiro ele vê SE NÃO 
+            if not banco.validar_Gmail(gmail_input):
+                print(f"O gmail: {gmail_input} que o Sr(a) colocou não é valido! Use um domínio aceito")
+                continue
+            
+            if banco.cadastrar_usuario(gmail_input, senha_input):
+                print(f"O gmail: {gmail_input}, já está cadastrado em nosso sistema. ")
+                continue
+            
+            break
+        
+        
+        
+        #Executa o trabalho
+        banco.cadastrar_usuario(gmail_input, senha_input)
+
+        #Mostrar a lista atual
+        banco.Listar_usuario()
+
+    elif escolha == 2:
+                # Deletar aqui:
+        print(" === DELETAR USUÁRIOS ===")
+        id_deletar = input("Digite o id que você quer excluir: ")
+        banco.deletar_usuarios(id_deletar)
+
+        # Aqui vc vai ver como ficou a lsita depois de excluir o usuário
+        banco.Listar_usuario()
+
+        #Aqui para fechar o banco
+        banco.fechar_conexao()
 
 
 
-
-# -- Cadastro --
-print("==== CADASTRAR USUÁRIO ====")
-
-while True:
-
-    gmail_input = input("Qual é o seu Gmail? ").lower().strip()  
-    
-    senha_input =  input("Digite uma senha: ")
-   
-
-    # Primeiro ele vê SE NÃO 
-    if not banco.validar_Gmail(gmail_input):
-        print(f"O gmail: {gmail_input} que o Sr(a) colocou não é valido! Use um domínio aceito")
+    elif escolha == 3:
         continue
-
-    if banco.cadastrar_usuario(gmail_input, senha_input):
-        print(f"O gmail: {gmail_input}, já está cadastrado em nosso sistema. ")
-        continue
-
-    break
-  
-
-
-#Executa o trabalho
-banco.cadastrar_usuario(gmail_input, senha_input)
-
-#Mostrar a lista atual
-banco.Listar_usuario()
-
-# Deletar aqui:
-
-print(" === DELETAR USUÁRIOS ===")
-id_deletar = input("Digite o id que você quer excluir: ")
-banco.deletar_usuarios(id_deletar)
-
-# Aqui vc vai ver como ficou a lsita depois de excluir o usuário
-banco.Listar_usuario()
-
-#Aqui para fechar o banco
-banco.fechar_conexao()
-
 
