@@ -48,7 +48,7 @@ class Banco_de_dados:
 
         if usuario_existente:
             print(f"Erro: O gmail {Gmail}, já foi cadastrado no sistema!")
-            return False       # <--- Retorna False avisando que o cadastro FALHOU
+            return False       # <--- Retorna False avisando que o cadastro FALHOU ----- return False: Quando o código descobre que o e-mail já existe, ele grita: "Opa, deu erro!" e para tudo.
 
 
         while True:
@@ -66,7 +66,7 @@ class Banco_de_dados:
             self.conexao.commit()
             print(f"\n ✅ O usuário foi cadastrado com sucesso! ")
             print(f"\n O seu id cadastrado --> {id_sorteado} ")
-                
+            return True    # return True: Quando o código passa por todas as checagens e consegue salvar no banco, ele grita: "Sucesso, deu tudo certo!".
 
 
     # ==========================================================================
@@ -116,12 +116,19 @@ banco = Banco_de_dados()
 print("==== CADASTRAR USUÁRIO ====")
 
 while True:
-    gmail_input = input("Qual é o seu melhor Gmail? ").lower().strip()  
+    gmail_input = input("Qual é o seu Gmail? ").lower().strip()  
 
-    if banco.validar_Gmail(gmail_input):
-        break
-    else: 
-        print( "❌ E-mail inválido! Use um domínio aceito (@gmail.com, @hotmail.com, @outlook.com, @yahoo.com).\n")
+    # Primeiro ele vê SE NÃO 
+    if not banco.validar_Gmail(gmail_input):
+        print(f"O gmail: {gmail_input} que o Sr(a) colocou não é valido! Use um domínio aceito")
+        continue
+
+    if banco.cadastrarusuario():
+        print(f"O gmail: {gmail_input}, já está cadastrado em nosso sistema. ")
+        continue
+
+    break
+  
 
 senha_input =  input("Digite uma senha: ")
 
