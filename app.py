@@ -1,6 +1,31 @@
 # Para criar um banco de dados com o python junto do SQL, devemos usar o seguinte codigo:
 import random
 import sqlite3
+from fastapi import FastAPI
+from google import genai
+from pydantic import BaseModel
+
+ia = FastAPI()
+#pegar na google ia studio
+cliente = genai.Client(api_key="A sua chave de api da google  gemini aqui")
+class Perguntas:
+    texto: str
+
+@ia.post("/perguntar")
+def resposta_do_gemini(pergunta: Perguntas):
+    resposta_ia = cliente.models.generate_content(
+        model='gemini-2.5-flash',
+        contents=pergunta.texto
+    )
+
+    texto_resposta = resposta_ia.text
+
+    return {
+
+        "status": "sucesso",
+        "provedor": "Google Gemini",
+        "resposta": texto_resposta
+    }
 
 class Banco_de_dados:
 
@@ -70,6 +95,41 @@ class Banco_de_dados:
 
 
     # ==========================================================================
+    # Nova função que coleta os dados locais e faz o meio-campo com o Gemini
+    def assistente_ia(self, pergunta_dono):
+         # Busca apenas a coluna Gmail de todo mundo no banco
+        self.cursor.execute("SELECT Gmail FROM login")
+        linhas = self.cursor.fetchall()
+        # Converte os dados do SQLite em uma string que a IA consegue ler
+        if not linhas:
+            print("Nenhum usuario cadastrado no momento")
+        else:
+            Listar_usuario = "\n".join([u[0]for u in linhas])
+
+        contexto_sistema = f"""
+        Você é o assistente virtual de TI e RH de uma empresa.
+        Abaixo está a lista completa e atualizada de TODOS os e-mails cadastrados no banco de dados local:
+
+        {Listar_usuario}
+
+            
+        O dono da empresa vai te fazer uma pergunta. Analise a lista e responda de forma direta e natural.
+        """
+
+        # 4. Envia o pacote completo para o modelo do Gemini processar
+
+        try:
+            resposta_ia = cliente.models.generate_content(
+                model='gemini-2.5-flash',
+                contents=f"{contexto_sistema}\n\nPergunta do Dono: {pergunta_dono}"
+            )
+            return resposta_ia.text  # Retorna apenas o texto limpo gerado pela IA
+        except Exception as e:
+            return f"❌ Erro ao conectar com o Gemini: {e}" 
+
+
+
+     # ==========================================================================
 
     def Listar_usuario(self):
         # Essa função serve para listar todos os usuarios do banco de dados
@@ -121,7 +181,7 @@ def Menu():
 
         print("\n3 - Listar contas")
 
-        print("\n4 - Modificar senha")
+        print("4 - Assistente IA (Perguntar ao Gemini) 🤖") # <-- Nova opção!
 
         print("\n5 - Sair")
 
@@ -180,3 +240,20 @@ while True:
     elif escolha == 3:
         continue
 
+    elif escolha == 4:
+        print("\n [Assistente IA] Olá, Diretor! O que deseja saber sobre a nossa base de dados?")
+        pergunta = input("Sua pergunta (ex: 'O João está cadastrado?' ou 'Temos e-mails do Yahoo?'): ")
+
+        print("\n⏳ Consultando o banco de dados: ")
+        resposta_final = banco.perguntar_ao_assistente(pergunta) 
+
+        print("\n Resposta assistente: ")
+        print(resposta_final)
+        print("------------------------------")
+
+    elif escolha == 5:
+        print("Encerrando sistema")
+        banco.fechar_conexao()   
+        break
+    else:
+        print("Opção não indentificada! Tente novamente") 
