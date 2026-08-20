@@ -103,6 +103,30 @@ class Banco_de_dados:
         # Essa função serve para fechar o codigo!
         self.conexao.close()        
                 
+def Menu():
+    
+    while True:
+
+        print("\n=== CADASTROS DEPARTAMENTOS ===\n")
+    
+        print("\nEscolha a opção desejada\n")
+    
+        print("\n1 - Cadastra novo usuário")
+    
+        print("\n2 - Excluir conta")
+    
+        print("\n3 - Listar contas")
+    
+        print("\n4 - Modificar senha")
+    
+        print("\n5 - Sair")
+    
+    
+        input("Esscolha uma opção: ").strip()
+
+
+    
+
 
 
 
@@ -112,25 +136,34 @@ class Banco_de_dados:
 
 banco = Banco_de_dados()
 
+while True:
+
+    print("\n MENU PRINCIPAL")
+
+
+
+
 # -- Cadastro --
 print("==== CADASTRAR USUÁRIO ====")
 
 while True:
+
     gmail_input = input("Qual é o seu Gmail? ").lower().strip()  
+    
+    senha_input =  input("Digite uma senha: ")
+   
 
     # Primeiro ele vê SE NÃO 
     if not banco.validar_Gmail(gmail_input):
         print(f"O gmail: {gmail_input} que o Sr(a) colocou não é valido! Use um domínio aceito")
         continue
 
-    if banco.cadastrarusuario():
+    if banco.cadastrar_usuario(gmail_input, senha_input):
         print(f"O gmail: {gmail_input}, já está cadastrado em nosso sistema. ")
         continue
 
     break
   
-
-senha_input =  input("Digite uma senha: ")
 
 
 #Executa o trabalho
