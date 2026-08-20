@@ -4,8 +4,8 @@ import sqlite3
 
 class Banco_de_dados:
 
-    #O __init__ Serve para preparar o terreno e inicializar as variaveis 
-    #Basicamente serve para conectar toda vez que a gente entra na classe! 
+    #O __init__ Serve para preparar o codigo e inicializar as variaveis 
+    #Basicamente serve para conectar toda vez que a gente entra na classe/ ele sempre vai criar 3 coisas quando entramos na classe, abre o banco, escreve no sql e já chama a função para criar a tabela no sql
     def __init__(self, nome_banco = "Dados.db"):
 
         self.conexao = sqlite3.connect(nome_banco) # ---> self.conexao: Abre o arquivo do banco.
