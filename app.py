@@ -206,15 +206,19 @@ while True:
         banco.Listar_usuario()
 
     elif escolha == "4":
-        print("\n🤖 [Assistente IA] Olá, Diretor! O que deseja saber sobre a nossa base de dados?")
-        pergunta = input("Sua pergunta: ")
-        
-        print("\n⏳ Consultando o banco de dados")
-        resposta_final = banco.assistente_ia(pergunta)
-        
-        print("\n--- RESPOSTA DO ASSISTENTE ---")
-        print(resposta_final)
-        print("------------------------------")
+        while True:
+            print("\n🤖 [Assistente IA] Olá, Diretor! O que deseja saber sobre a nossa base de dados? (PARA SAIR DIGITE: SAIR)")
+            pergunta = input("Sua pergunta: ").upper()
+
+            print("\n⏳ Consultando o banco de dados")
+            resposta_final = banco.assistente_ia(pergunta)
+
+            print("\n--- RESPOSTA DO ASSISTENTE ---")
+            print(resposta_final)
+            print("------------------------------")
+
+            if pergunta == 'SAIR':
+                break
 
     elif escolha == "5":
         print("\n👋 Encerrando o sistema... Até logo!")
