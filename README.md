@@ -34,10 +34,3 @@ A aplicação gerencia cadastros de usuários locais em um banco de dados **SQLi
 ### Pré-requisitos
 - Python instalado na sua máquina (versão 3.10+ recomendada).
 - Uma chave de API do **Google AI Studio** (API Key).
-
-### Passo a Passo
-
-1. **Clonar o repositório:**
-```bash
-git clone [https://github.com/SganzerlaGui/Projeto-banco-de-dado.git](https://github.com/SganzerlaGui/Projeto-banco-de-dado.git)
-cd Projeto-banco-de-dado
